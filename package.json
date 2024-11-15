@@ -3,9 +3,7 @@
     "version": "1.0.0",
     "description": "Application review interface",
     "dependencies": {
-      "@netlify/functions": "^2.0.0",
-      "node-fetch": "^3.3.0"
+        "@netlify/functions": "^2.8.2",
+        "node-fetch": "^3.3.2"
     }
-  }
-
-  
+}
