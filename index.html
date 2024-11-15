@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Review</title>
+    <style>
+        body {
+            background: black;
+            color: white;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: #191919;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .response-item {
+            margin-bottom: 15px;
+        }
+
+        .label {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .value {
+            color: white;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: opacity 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.8;
+        }
+
+        .accept {
+            background: #44ff44;
+            color: black;
+        }
+
+        .reject {
+            background: #ff4444;
+            color: white;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .social-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .social-link {
+            color: #4a9eff;
+            text-decoration: none;
+        }
+
+        .social-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="responses">
+            <div class="loading">Loading applications...</div>
+        </div>
+    </div>
+
+    <script>
+        let currentIndex = 0;
+        let applications = [];
+
+        async function fetchResponses() {
+            try {
+                const response = await fetch('/.netlify/functions/get-responses');
+                const data = await response.json();
+                applications = data;
+                showCurrentApplication();
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('responses').innerHTML = 
+                    '<div class="card">Error loading applications</div>';
+            }
+        }
+
+        function showCurrentApplication() {
+            if (!applications[currentIndex]) {
+                document.getElementById('responses').innerHTML = 
+                    '<div class="card">No more applications to review</div>';
+                return;
+            }
+
+            const app = applications[currentIndex];
+            const answers = app.answers;
+
+            document.getElementById('responses').innerHTML = `
+                <div class="card">
+                    <div class="response-item">
+                        <div class="label">Name</div>
+                        <div class="value">${answers['name']}</div>
+                    </div>
+                    <div class="response-item">
+                        <div class="label">Contact</div>
+                        <div class="value">${answers['email-phone']}</div>
+                    </div>
+                    <div class="response-item">
+                        <div class="label">Social Media</div>
+                        <div class="value social-links">
+                            ${formatSocialLinks(answers['social-links'])}
+                        </div>
+                    </div>
+                    <div class="response-item">
+                        <div class="label">Content Creation Experience</div>
+                        <div class="value">${answers['experience']}</div>
+                    </div>
+                    <div class="response-item">
+                        <div class="label">Availability</div>
+                        <div class="value">${answers['availability']}</div>
+                    </div>
+                    <div class="response-item">
+                        <div class="label">Ad Production Comfort</div>
+                        <div class="value">${answers['ad-comfort']}</div>
+                    </div>
+                    <div class="response-item">
+                        <div class="label">Achievements</div>
+                        <div class="value">${answers['achievements']}</div>
+                    </div>
+
+                    <div class="controls">
+                        <button class="reject" onclick="handleReject()">Reject</button>
+                        <button class="accept" onclick="handleAccept()">Accept</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function formatSocialLinks(links) {
+            if (!links) return 'No social links provided';
+            return links.split('\n')
+                .map(link => `<a href="${link}" target="_blank" class="social-link">${link}</a>`)
+                .join('');
+        }
+
+        async function handleAccept() {
+            // Here you would implement the accept logic
+            // For now, just move to next application
+            currentIndex++;
+            showCurrentApplication();
+        }
+
+        async function handleReject() {
+            // Here you would implement the reject logic
+            // For now, just move to next application
+            currentIndex++;
+            showCurrentApplication();
+        }
+
+        // Start loading applications
+        fetchResponses();
+    </script>
+</body>
+</html>
+
