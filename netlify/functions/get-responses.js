@@ -1,4 +1,4 @@
-const fetch = require('node-fetch');
+import fetch from 'node-fetch';
 
 exports.handler = async function(event, context) {
     const headers = {
@@ -15,7 +15,6 @@ exports.handler = async function(event, context) {
         };
     }
 
-    // Use environment variables instead of hardcoded values
     const TYPEFORM_TOKEN = process.env.TYPEFORM_TOKEN;
     const FORM_ID = process.env.TYPEFORM_FORM_ID;
 
